@@ -1,0 +1,233 @@
+ <div class="app-container">
+        <header class="app-header">
+            <h1>Analizador de Video Inteligente</h1>
+            <p>Detección de objetos y análisis de comportamiento</p>
+        </header>
+<main class="main-content">
+
+<section class="upload-section">
+  <div class="upload-area" [class.disabled]="videoUploaded" id="uploadArea">
+    <input 
+      type="file" 
+      (change)="onFileSelected($event)" 
+      id="videoUpload" 
+      accept="video/*" 
+      class="file-input"
+      [disabled]="videoUploaded"
+    >
+    <label for="videoUpload" class="upload-label">
+      <div class="upload-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+      </div>
+      <h3>Haz clic o arrastra tu video aquí</h3>
+      <p class="file-info" id="fileInfo">
+        {{ videoUploaded ? 'Video cargado. No se puede subir otro.' : 'Formatos soportados: MP4, AVI, MOV' }}
+      </p>
+    </label>
+  </div>
+</section>
+
+             <section class="video-section">
+                <canvas #videoCanvas class="video-canvas"></canvas>
+
+                <!-- Frames procesados desde el backend -->
+                <div *ngIf="frameUrl" class="processed-frame">
+                  <img [src]="frameUrl" alt="Video frame procesado" class="video-player"
+                     />
+                            </div>
+                        </section>
+
+<section class="results-section" *ngIf="videoFinished">
+                
+
+ <div class="results-container">
+
+  <!-- HEADER -->
+  <div class="results-header">
+    <h2>🎯 Resultados del Análisis</h2>
+    <p>Sistema con 2 modelos: YOLO (objetos) + Red Neuronal (anomalías)</p>
+    <p class="analysis-timestamp">🕒{{analysisResults?.timestamp}}</p>
+  </div>
+
+  <!-- GRID DE RESULTADOS -->
+  <div class="results-grid">
+
+    <!-- MODELO YOLO -->
+    <div class="result-card">
+      <h3>🔫 Modelo YOLO - Detección de Objetos</h3>
+      <div class="metric">
+        <span>Armas detectadas:</span>
+        <span class="metric-value" [ngClass]="analysisResults?.weapons_detected > 0 ? 'alert' : 'success'">
+          {{ analysisResults?.weapons_count}}
+        </span>
+      </div>
+      <div class="metric">
+        <span>Rostros cubiertos:</span>
+        <span class="metric-value" [ngClass]="analysisResults?.covered_faces_detected > 0 ? 'warning' : 'success'">
+          {{ analysisResults?.covered_count }}
+        </span>
+      </div>
+       <div class="metric">
+        <span>Personas detectadas:</span>
+        <span class="metric-value" [ngClass]="analysisResults?.normal_people_detected > 0 ? 'warning' : 'success'">
+          {{ analysisResults?.normal_count }}
+        </span>
+      </div>
+       <div class="metric">
+        <span>Acciones sospechosas:</span>
+        <span class="metric-value" [ngClass]="analysisResults?.abnormal_behavior_detected > 0 ? 'warning' : 'success'">
+          {{ analysisResults?.abnormal_count }}
+        </span>
+      </div>
+      <div class="metric">
+        <small>Confianza promedio: %</small>
+      </div>
+    </div>
+
+    <!-- MODELO ANOMALÍAS -->
+    <div class="result-card">
+      <h3>⚠️ Modelo Anomalías - Comportamiento</h3>
+      <div class="metric">
+        <span>Comportamiento anómalo:</span>
+        <span class="metric-value" [ngClass]="hasAnomaly ? 'warning' : 'success'">
+          {{ hasAnomaly ? 'SÍ' : 'NO' }}
+        </span>
+      </div>
+      <div class="metric">
+        <span>Secuencias analizadas:</span>
+        <span class="metric-value">{{ processedFrames ? (processedFrames / 25 | number:'1.0-0') : 0 }}</span>
+      </div>
+      <div class="metric">
+        <span>Longitud secuencia:</span>
+        <span class="metric-value">25 frames</span>
+      </div>
+      <div *ngIf="hasAnomaly" class="confidence-info">
+        <small>Detección de patrones anómalos</small>
+      </div>
+    </div>
+
+  </div>
+
+ <!-- DETALLES EXPANDIBLES -->
+<div class="detailed-results">
+  <button class="toggle-details-btn" (click)="toggleDetails()">
+    <span>{{ showDetails ? 'Ocultar detalles completos' : 'Mostrar detalles completos' }}</span>
+    <svg [ngClass]="{'rotated': showDetails}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  </button>
+
+  <div class="detailed-content" *ngIf="showDetails">
+
+    <!-- DETALLES DE DETECCIONES -->
+    <div class="detections-detail">
+      <h3>🔍 Detalles de las Detecciones ({{ analysisResults?.detections?.length || 0 }} total)</h3>
+
+      <ng-container *ngIf="analysisResults?.detections?.length; else noDetections">
+        <div class="detections-stats">
+          <div class="stat-badge weapon">🔫 {{ analysisResults?.weapon_count  }} armas</div>
+          <div class="stat-badge covered">🎭 {{ analysisResults?.covered_count  }} rostros cubiertos</div>
+          <div class="stat-badge person">👤 {{ analysisResults?.normal_count  }} personas</div>
+           <div class="stat-badge person">⚠️ {{ analysisResults?.anormal_count  }} personas</div>
+        </div>
+
+        <div class="detections-list">
+          <div *ngFor="let det of analysisResults.detections.slice(0,15)" class="detection-item" [ngClass]="det.category || det.type">
+            <span class="detection-type">{{ getDetectionIcon(det.category || det.type) }} {{ det.category || det.type }}</span>
+            <span class="detection-confidence">{{ (det.confidence || 0.7) * 100 | number:'1.0-0' }}%</span>
+            <span class="detection-frame">Frame {{ det.frame_number || 'N/A' }}</span>
+          </div>
+        </div>
+
+        <p *ngIf="analysisResults.detections.length > 16" class="show-more">
+          + {{ analysisResults.detections.length - 16 }} detecciones más...
+        </p>
+      </ng-container>
+
+      <ng-template #noDetections>
+        <p class="no-detections">No se encontraron detecciones de objetos</p>
+      </ng-template>
+    </div>
+
+    <!-- RESUMEN DE SEGURIDAD -->
+<!-- RESUMEN DE SEGURIDAD -->
+<div class="security-summary" 
+     [ngClass]="(analysisResults?.weapons_detected > 0 || analysisResults?.covered_faces_detected > 0 || analysisResults?.abnormal_behavior_detected > 0) ? 'alert' : 'safe'">
+  
+  <h3>
+    {{ (analysisResults?.weapons_detected > 0 || analysisResults?.covered_faces_detected > 0 || analysisResults?.abnormal_behavior_detected > 0)
+       ? '🚨 RESUMEN DE SEGURIDAD'
+       : '✅ ESTADO SEGURO' }}
+  </h3>
+
+  <div class="summary-content">
+    <div *ngIf="analysisResults?.weapons_detected > 0" class="summary-item alert">
+      🔫 Se detectaron armas en el video
+    </div>
+
+    <div *ngIf="analysisResults?.covered_faces_detected > 0" class="summary-item warning">
+      🎭 Se detectaron rostros cubiertos
+    </div>
+
+    <div *ngIf="analysisResults?.abnormal_behavior_detected > 0" class="summary-item warning">
+      ⚠️ Se detectó comportamiento anómalo
+    </div>
+
+    <div *ngIf="analysisResults?.weapons_detected === 0 && analysisResults?.covered_faces_detected === 0 && analysisResults?.abnormal_behavior_detected === 0" 
+         class="summary-item safe">
+      ✅ No se detectaron amenazas de seguridad
+    </div>
+  </div>
+</div>
+
+
+  </div>
+</div>
+
+
+</div>
+
+</section>
+            </main>
+      <!-- Modal de solución de problemas -->
+        <div id="helpModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Solución de problemas de conexión</h3>
+                    <button id="closeModal" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="troubleshooting-item">
+                        <h4>Error: WebSocket connection failed</h4>
+                        <p>Este error indica que no se puede establecer conexión con el servidor de análisis.</p>
+                        <div class="solution-steps">
+                            <p><strong>Soluciones:</strong></p>
+                            <ol>
+                                <li>Verifica que el servidor esté ejecutándose en <code>localhost:8000</code></li>
+                                <li>Asegúrate de que el endpoint WebSocket sea correcto: <code>/api/v1/ai/ws/</code></li>
+                                <li>Revisa que no haya bloqueos del firewall</li>
+                                <li>Intenta recargar la página</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="troubleshooting-item">
+                        <h4>Configuración alternativa</h4>
+                        <p>If the problem persists, try these alternative URLs:</p>
+                        <div class="alternative-urls">
+                            <button class="url-option" data-url="ws://localhost:8000/ws/video-analysis/">Alternativa 1</button>
+                            <button class="url-option" data-url="ws://127.0.0.1:8000/api/v1/ai/ws/">Alternativa 2</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+     <footer class="app-footer">
+            <p>Sistema de análisis de video en tiempo real</p>
+        </footer>
+        
+    </div>
+
