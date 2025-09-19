@@ -20,27 +20,35 @@ export class VideoService {
 
   // 📌 2. Conectarse al WebSocket para recibir frames
   connect(
-sessionId: string, onFrame: (frameUrl: string) => void, onAlert: () => void, onEnd: () => void): void {
+    sessionId: string,
+    onFrame: (frameUrl: string) => void,
+    onAlert: (msg: string) => void,
+    onEnd: () => void
+  ): void {
     this.ws = new WebSocket(`ws://localhost:8000/ws/${sessionId}`);
 
     this.ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
+      // 👉 Caso 1: mensaje binario (frame en JPEG)
+      if (event.data instanceof Blob) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          onFrame(reader.result as string); // data:image/jpeg;base64,...
+        };
+        reader.readAsDataURL(event.data);
+      }
+      // 👉 Caso 2: mensaje texto (JSON)
+      else if (typeof event.data === 'string') {
+        try {
+          const data = JSON.parse(event.data);
 
-        if (data.type === 'frame') {
-          // ⚡ Recibimos un frame en base64 → convertir a URL para <img>
-          onFrame(`data:image/jpeg;base64,${data.frame}`);
-        } else if (data.type === 'alert') {
-          onAlert();
+          if (data.type === 'alert') {
+            onAlert(data.message || '⚠️ Anomalía detectada');
+          } else if (data.type === 'end') {
+            onEnd();
+          }
+        } catch (err) {
+          console.error('❌ Error procesando JSON WS:', err);
         }
-        else if (data.type === 'end') {
-          if (onEnd) onEnd();
-        }
-        else if (data.type === 'alert') {
-          console.error('data.message');
-        }
-      } catch (err) {
-        console.error('❌ Error procesando mensaje WS:', err);
       }
     };
 

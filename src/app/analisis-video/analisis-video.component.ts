@@ -117,6 +117,48 @@ getDetectionIcon(type: string) {
   return icons[type] || '📦';
 }
 
+async downloadReport() {
+  const element = document.getElementById("report-content");
+  if (!element) return;
+
+  const html2canvas = (await import("html2canvas")).default;
+  const jsPDF = (await import("jspdf")).default;
+
+  // Renderizar el div como canvas
+  const canvas = await html2canvas(element, { 
+    scale: 3,              // más nítido
+    useCORS: true, 
+    backgroundColor: null, // respeta fondo transparente
+    logging: false
+  });
+
+  // Exportar a imagen PNG (máxima calidad)
+  const imgData = canvas.toDataURL("image/png", 1.0);
+
+  // Configurar PDF
+  const pdf = new jsPDF("p", "mm", "a4");
+  const imgWidth = 190; // ancho en mm
+  const pageHeight = 295;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  let heightLeft = imgHeight;
+  let position = 10;
+
+  // Primera página
+  pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight, undefined, "FAST");
+  heightLeft -= pageHeight;
+
+  // Si ocupa más de una página
+  while (heightLeft > 0) {
+    position = heightLeft - imgHeight + 10;
+    pdf.addPage();
+    pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight, undefined, "FAST");
+    heightLeft -= pageHeight;
+  }
+
+  pdf.save(`analisis_video_${this.sessionId || Date.now()}.pdf`);
+}
+
+
   ngOnDestroy() {
     this.videoService.disconnect();
   }

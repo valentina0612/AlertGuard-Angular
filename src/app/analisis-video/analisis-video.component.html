@@ -44,7 +44,7 @@
 <section class="results-section" *ngIf="videoFinished">
                 
 
- <div class="results-container">
+ <div class="results-container" id="report-content">
 
   <!-- HEADER -->
   <div class="results-header">
@@ -224,7 +224,12 @@
                     </div>
                 </div>
             </div>
+  
+
         </div>
+        <div>
+            <button (click)="downloadReport()">📥 Descargar Reporte</button>
+            </div>
      <footer class="app-footer">
             <p>Sistema de análisis de video en tiempo real</p>
         </footer>
