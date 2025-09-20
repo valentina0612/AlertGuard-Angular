@@ -44,6 +44,7 @@ export class AnalisisVideoComponent implements OnDestroy {
       next: (res) => {
         this.sessionId = res.session_id;
         this.statusMessage = 'Procesando...';
+        alert('Video subido correctamente. ID de sesión: ' + this.sessionId);
 
         // 🚀 Abrir conexión WS
         this.videoService.connect(
@@ -76,6 +77,7 @@ export class AnalisisVideoComponent implements OnDestroy {
 
   // 🔄 Polling al backend hasta obtener resultados
   async pollAnalysisResults(sessionId: string) {
+    await this.uploadResults(sessionId); // llamada inicial
     return new Promise<void>((resolve) => {
       const interval = setInterval(async () => {
         try {
@@ -83,7 +85,7 @@ export class AnalisisVideoComponent implements OnDestroy {
           if (res?.status === 'completed') {
             this.analysisResults = res;
             clearInterval(interval);
-            this.statusMessage = '✅ Análisis completado';
+            this.statusMessage = 'Análisis completado';
             resolve();
           }
         } catch (err) {
@@ -93,6 +95,16 @@ export class AnalisisVideoComponent implements OnDestroy {
         }
       }, 5000);
     });
+  }
+
+  async uploadResults(session_id: string) {
+    try {
+      const res = await this.http.put(`http://localhost:8000/results/${session_id}/save`, null).toPromise();
+      alert('Resultados guardados en la base de datos.');
+    } catch (err) {
+      console.error('Error guardando resultados:', err);
+      alert('Error guardando resultados.');
+    }
   }
 
   // 📡 Consulta directa al backend
