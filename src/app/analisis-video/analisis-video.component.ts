@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VideoService } from '../services/video.service';
 import { HttpClient } from '@angular/common/http';
@@ -10,25 +10,25 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './analisis-video.component.html',
   styleUrls: ['./analisis-video.component.css']
 })
-export class AnalisisVideoComponent {
+export class AnalisisVideoComponent implements OnDestroy {
   statusMessage = '';
   frameUrl: string | null = null; 
   private sessionId: string | null = null;
 
-  analysisResults: any = null; // 👉 aquí guardamos el JSON del backend
+  analysisResults: any = null;
+
+  hasAnomaly: boolean = false;
+  processedFrames: number = 0;
+  videoUploaded: boolean = false;
+  videoFinished: boolean = false;
+  showDetails: boolean = false;
 
   constructor(
     private videoService: VideoService,
     private http: HttpClient
   ) {}
 
-  
-  hasAnomaly: boolean = false;
-  processedFrames: number = 0;
-  videoUploaded: boolean = false;
-  videoFinished:boolean = false;
   onFileSelected(event: Event) {
-
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
@@ -38,6 +38,7 @@ export class AnalisisVideoComponent {
     this.videoFinished = false;
     this.hasAnomaly = false;
     this.processedFrames = 0;
+    this.analysisResults = null;
     
     this.videoService.uploadVideo(file).subscribe({
       next: (res) => {
@@ -48,7 +49,7 @@ export class AnalisisVideoComponent {
         this.videoService.connect(
           this.sessionId,
           (url) => {
-            this.frameUrl = url; // 👉 mostrar frames
+            this.frameUrl = url;
             this.processedFrames++;
           },
           () => {
@@ -75,18 +76,23 @@ export class AnalisisVideoComponent {
 
   // 🔄 Polling al backend hasta obtener resultados
   async pollAnalysisResults(sessionId: string) {
-    const interval = setInterval(async () => {
-      try {
-        const res: any = await this.fetchAnalysisResults(sessionId);
-        if (res?.status === 'completed') {
-          this.analysisResults = res;
-          clearInterval(interval); // ✅ ya tenemos resultados
-          this.statusMessage = '✅ Análisis completado';
+    return new Promise<void>((resolve) => {
+      const interval = setInterval(async () => {
+        try {
+          const res: any = await this.fetchAnalysisResults(sessionId);
+          if (res?.status === 'completed') {
+            this.analysisResults = res;
+            clearInterval(interval);
+            this.statusMessage = '✅ Análisis completado';
+            resolve();
+          }
+        } catch (err) {
+          console.error('Error obteniendo resultados:', err);
+          clearInterval(interval);
+          resolve();
         }
-      } catch (err) {
-        console.error('Error obteniendo resultados:', err);
-      }
-    }, 5000); // cada 5s
+      }, 5000);
+    });
   }
 
   // 📡 Consulta directa al backend
@@ -96,14 +102,12 @@ export class AnalisisVideoComponent {
       .toPromise();
   }
 
-  showDetails: boolean = false;
-
   toggleDetails() {
     this.showDetails = !this.showDetails;
   }
 
-getDetectionIcon(type: string) {
-  const icons: { [key: string]: string } = {
+  getDetectionIcon(type: string) {
+    const icons: { [key: string]: string } = {
       'weapon': '🔫',
       'covered_face': '🎭',
       'covered': '🎭',
@@ -113,51 +117,53 @@ getDetectionIcon(type: string) {
       'normal_person': '👤',
       'person': '👤',
       'normal': '👤'
-  };
-  return icons[type] || '📦';
-}
-
-async downloadReport() {
-  const element = document.getElementById("report-content");
-  if (!element) return;
-
-  const html2canvas = (await import("html2canvas")).default;
-  const jsPDF = (await import("jspdf")).default;
-
-  // Renderizar el div como canvas
-  const canvas = await html2canvas(element, { 
-    scale: 3,              // más nítido
-    useCORS: true, 
-    backgroundColor: null, // respeta fondo transparente
-    logging: false
-  });
-
-  // Exportar a imagen PNG (máxima calidad)
-  const imgData = canvas.toDataURL("image/png", 1.0);
-
-  // Configurar PDF
-  const pdf = new jsPDF("p", "mm", "a4");
-  const imgWidth = 190; // ancho en mm
-  const pageHeight = 295;
-  const imgHeight = (canvas.height * imgWidth) / canvas.width;
-  let heightLeft = imgHeight;
-  let position = 10;
-
-  // Primera página
-  pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight, undefined, "FAST");
-  heightLeft -= pageHeight;
-
-  // Si ocupa más de una página
-  while (heightLeft > 0) {
-    position = heightLeft - imgHeight + 10;
-    pdf.addPage();
-    pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight, undefined, "FAST");
-    heightLeft -= pageHeight;
+    };
+    return icons[type] || '📦';
   }
 
-  pdf.save(`analisis_video_${this.sessionId || Date.now()}.pdf`);
-}
-
+  // Método para imprimir el reporte
+  printReport() {
+    const element = document.getElementById('report-content');
+    if (!element) return;
+    
+    // Guardar estilos originales
+    const originalStyles = {
+      width: element.style.width,
+      padding: element.style.padding,
+      backgroundColor: element.style.backgroundColor,
+      color: element.style.color
+    };
+    
+    // Aplicar estilos para impresión
+    element.style.width = '100%';
+    element.style.padding = '20px';
+    element.style.backgroundColor = '#FFFFFF';
+    element.style.color = '#000000';
+    element.classList.add('pdf-export');
+    
+    // Ocultar elementos no deseados en la impresión
+    const elementsToHide = document.querySelectorAll('.download-section, .toggle-details-btn, .app-footer, .download-buttons');
+    elementsToHide.forEach((el: any) => {
+      el.style.display = 'none';
+    });
+    
+    // Realizar la impresión
+    window.print();
+    
+    // Restaurar estilos después de imprimir
+    setTimeout(() => {
+      element.style.width = originalStyles.width;
+      element.style.padding = originalStyles.padding;
+      element.style.backgroundColor = originalStyles.backgroundColor;
+      element.style.color = originalStyles.color;
+      element.classList.remove('pdf-export');
+      
+      // Mostrar elementos ocultos
+      elementsToHide.forEach((el: any) => {
+        el.style.display = '';
+      });
+    }, 500);
+  }
 
   ngOnDestroy() {
     this.videoService.disconnect();
