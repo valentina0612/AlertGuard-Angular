@@ -2,6 +2,8 @@ import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VideoService } from '../services/video.service';
 import { HttpClient } from '@angular/common/http';
+import Swal from 'sweetalert2';
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'app-analisis-video',
@@ -25,7 +27,8 @@ export class AnalisisVideoComponent implements OnDestroy {
 
   constructor(
     private videoService: VideoService,
-    private http: HttpClient
+    private http: HttpClient,
+    private snackBar: MatSnackBar
   ) {}
 
   onFileSelected(event: Event) {
@@ -44,7 +47,13 @@ export class AnalisisVideoComponent implements OnDestroy {
       next: (res) => {
         this.sessionId = res.session_id;
         this.statusMessage = 'Procesando...';
-        alert('Video subido correctamente. ID de sesión: ' + this.sessionId);
+        Swal.fire({
+        icon: 'success',
+        title: 'Video subido correctamente',
+        text: 'Subiendo video a la base de datos.',
+        confirmButtonText: 'Aceptar'
+      });
+
 
         // 🚀 Abrir conexión WS
         this.videoService.connect(
@@ -56,6 +65,7 @@ export class AnalisisVideoComponent implements OnDestroy {
           () => {
             this.statusMessage = '⚠️ ALERTA DETECTADA';
             this.hasAnomaly = true;
+            this.alerta();
           },
           async () => {
             this.statusMessage = '⏳ Procesamiento terminado, obteniendo resultados...';
@@ -74,6 +84,27 @@ export class AnalisisVideoComponent implements OnDestroy {
       }
     });
   }
+
+alerta() {
+  // reproducir sonido
+  const audio = new Audio();
+  audio.src = 'assets/Alarma.mp3';
+  audio.load();
+  audio.play();
+
+  // mostrar snackbar
+  this.snackBar.open(
+    'Se ha detectado una anomalía en el video.',
+    'Aceptar',
+    {
+      duration: 5000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: ['snackbar-warning']
+    }
+  );
+}
+
 
   // 🔄 Polling al backend hasta obtener resultados
   async pollAnalysisResults(sessionId: string) {
@@ -100,10 +131,20 @@ export class AnalisisVideoComponent implements OnDestroy {
   async uploadResults(session_id: string) {
     try {
       const res = await this.http.put(`http://localhost:8000/results/${session_id}/save`, null).toPromise();
-      alert('Resultados guardados en la base de datos.');
+      Swal.fire({
+        icon: 'success',
+        title: 'Resultados guardados',
+        text: 'Los resultados del análisis han sido guardados en la base de datos.',
+        confirmButtonText: 'Aceptar'
+      });
     } catch (err) {
       console.error('Error guardando resultados:', err);
-      alert('Error guardando resultados.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Hubo un error al guardar los resultados en la base de datos.',
+        confirmButtonText: 'Aceptar'
+      });
     }
   }
 
