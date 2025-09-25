@@ -27,7 +27,7 @@ export class VideoService {
     onAlert: (msg: string) => void,
     onEnd: () => void
   ): void {
-    this.ws = new WebSocket(`ws://alertguard-backend-production.up.railway.app/api/ws/${sessionId}`);
+    this.ws = new WebSocket(`wss://alertguard-backend-production.up.railway.app/api/ws/${sessionId}`);
 
     this.ws.onmessage = (event) => {
       // 👉 Caso 1: mensaje binario (frame en JPEG)
