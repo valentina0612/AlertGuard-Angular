@@ -36,6 +36,15 @@ export class AnalisisVideoComponent implements OnDestroy {
     private snackBar: MatSnackBar
   ) {}
 
+  ngInit() {
+    Swal.fire({
+      icon: 'info',
+      title: 'Bienvenido',
+      text: 'El video no debe superar los 50 MB y será almacenado para mejorar el sistema.',
+      confirmButtonText: 'Aceptar'
+    });
+  }
+    
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
@@ -53,6 +62,18 @@ export class AnalisisVideoComponent implements OnDestroy {
       next: (res) => {
         this.sessionId = res.session_id;
         this.statusMessage = 'Procesando...';
+
+        // Verificar que el video no pese más de 50MB
+        if (file.size > 50 * 1024 * 1024) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Archivo muy grande',
+            text: 'El archivo supera los 50MB. Por favor, suba un archivo más pequeño.',
+            confirmButtonText: 'Aceptar'
+          });
+          this.videoUploaded = false;
+          return;
+        }
         
         // Estimar total de frames basado en duración del video (ejemplo)
         this.estimateTotalFrames(file);
