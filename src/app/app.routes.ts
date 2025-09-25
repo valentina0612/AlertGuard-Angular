@@ -4,4 +4,6 @@ import { AnalisisVideoComponent } from './analisis-video/analisis-video.componen
 
 export const routes: Routes = [
   { path: '', component: AnalisisVideoComponent },
+  {path: '**', redirectTo: ''},  // Ruta comodín para manejar rutas no definidas
+  {path: 'analisis-video', component: AnalisisVideoComponent}
 ];
