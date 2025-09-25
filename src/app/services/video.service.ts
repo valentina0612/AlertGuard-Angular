@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../enviroments/enviaroments.prod';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class VideoService {
-  private apiUrl = 'http://localhost:8000/api'; // FastAPI
+  private apiUrl = environment.backendUrl; // FastAPI
   private ws: WebSocket | null = null;
 
   constructor(private http: HttpClient) {}

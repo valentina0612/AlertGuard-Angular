@@ -4,6 +4,8 @@ import { VideoService } from '../services/video.service';
 import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { MatSnackBar } from '@angular/material/snack-bar'
+import { environment } from '../enviroments/enviaroments.prod';
+// ✅ Importa environment
 
 @Component({
   selector: 'app-analisis-video',
@@ -177,7 +179,10 @@ export class AnalisisVideoComponent implements OnDestroy {
 
   async uploadResults(session_id: string) {
     try {
-      const res = await this.http.put(`http://localhost:8000/api/results/${session_id}/save`, null).toPromise();
+      const res = await this.http.put(
+        `${environment.backendUrl}/results/${session_id}/save`, // ✅ Environment
+        null
+      ).toPromise();
       Swal.fire({
         icon: 'success',
         title: 'Resultados guardados',
@@ -198,7 +203,7 @@ export class AnalisisVideoComponent implements OnDestroy {
   // 📡 Consulta directa al backend
   async fetchAnalysisResults(sessionId: string): Promise<any> {
     return this.http
-      .get<any>(`http://localhost:8000/api/results/${sessionId}`)
+      .get<any>(`${environment.backendUrl}/results/${sessionId}`) // ✅ Environment
       .toPromise();
   }
 
