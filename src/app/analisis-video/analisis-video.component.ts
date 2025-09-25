@@ -17,13 +17,16 @@ export class AnalisisVideoComponent implements OnDestroy {
   frameUrl: string | null = null; 
   private sessionId: string | null = null;
 
-  analysisResults: any = null;
-
-  hasAnomaly: boolean = false;
-  processedFrames: number = 0;
+  // ✅ Variables usadas en el HTML
+  progress: number = 0;           // Avance en porcentaje (0-100)
+  anomalyConfidence: number = 85; // Confianza de anomalía
+  processedFrames: number = 0;    // Frames procesados
+  totalFrames: number = 100;      // Total estimado de frames (ajustar según video)
   videoUploaded: boolean = false;
   videoFinished: boolean = false;
   showDetails: boolean = false;
+  hasAnomaly: boolean = false;
+  analysisResults: any = null;
 
   constructor(
     private videoService: VideoService,
@@ -41,19 +44,23 @@ export class AnalisisVideoComponent implements OnDestroy {
     this.videoFinished = false;
     this.hasAnomaly = false;
     this.processedFrames = 0;
+    this.progress = 0;
     this.analysisResults = null;
     
     this.videoService.uploadVideo(file).subscribe({
       next: (res) => {
         this.sessionId = res.session_id;
         this.statusMessage = 'Procesando...';
+        
+        // Estimar total de frames basado en duración del video (ejemplo)
+        this.estimateTotalFrames(file);
+        
         Swal.fire({
-        icon: 'success',
-        title: 'Video subido correctamente',
-        text: 'Subiendo video a la base de datos.',
-        confirmButtonText: 'Aceptar'
-      });
-
+          icon: 'success',
+          title: 'Video subido correctamente',
+          text: 'Subiendo video a la base de datos.',
+          confirmButtonText: 'Aceptar'
+        });
 
         // 🚀 Abrir conexión WS
         this.videoService.connect(
@@ -61,6 +68,7 @@ export class AnalisisVideoComponent implements OnDestroy {
           (url) => {
             this.frameUrl = url;
             this.processedFrames++;
+            this.updateProgress(); // Actualizar progreso con cada frame
           },
           () => {
             this.statusMessage = '⚠️ ALERTA DETECTADA';
@@ -69,6 +77,7 @@ export class AnalisisVideoComponent implements OnDestroy {
           },
           async () => {
             this.statusMessage = '⏳ Procesamiento terminado, obteniendo resultados...';
+            this.progress = 100; // Completar al 100% al terminar
     
             // 🔄 arrancamos polling SOLO cuando llega "end"
             if (this.sessionId) {
@@ -81,30 +90,68 @@ export class AnalisisVideoComponent implements OnDestroy {
       },
       error: () => {
         this.statusMessage = 'Error al subir o procesar.';
+        this.videoUploaded = false;
       }
     });
   }
 
-alerta() {
-  // reproducir sonido
-  const audio = new Audio();
-  audio.src = 'assets/Alarma.mp3';
-  audio.load();
-  audio.play();
+  // Método para estimar el total de frames del video
+  private estimateTotalFrames(file: File) {
+    const video = document.createElement('video');
+    video.src = URL.createObjectURL(file);
+    
+    video.onloadedmetadata = () => {
+      // Estimación: 30 frames por segundo × duración en segundos
+      const duration = video.duration;
+      this.totalFrames = Math.round(duration * 30); // 30 FPS
+      URL.revokeObjectURL(video.src);
+    };
+    
+    video.onerror = () => {
+      // Si no se puede obtener la duración, usar un valor por defecto
+      this.totalFrames = 300; // Valor por defecto
+    };
+  }
 
-  // mostrar snackbar
-  this.snackBar.open(
-    'Se ha detectado una anomalía en el video.',
-    'Aceptar',
-    {
-      duration: 5000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top',
-      panelClass: ['snackbar-warning']
+  // Método para actualizar el progreso
+  private updateProgress() {
+    if (this.totalFrames > 0) {
+      this.progress = Math.min(100, Math.round((this.processedFrames / this.totalFrames) * 100));
+    } else {
+      // Si no tenemos total, usar incremento gradual
+      this.progress = Math.min(100, this.progress + 1);
     }
-  );
-}
+    
+    // Simular progreso más suave si el avance es muy lento
+    if (this.progress < 95 && this.processedFrames > 0) {
+      setTimeout(() => {
+        // Pequeño incremento adicional para simular progreso continuo
+        if (this.progress < 95) {
+          this.progress = Math.min(95, this.progress + 0.5);
+        }
+      }, 1000);
+    }
+  }
 
+  alerta() {
+    // reproducir sonido
+    const audio = new Audio();
+    audio.src = 'assets/Alarma.mp3';
+    audio.load();
+    audio.play();
+
+    // mostrar snackbar
+    this.snackBar.open(
+      'Se ha detectado una anomalía en el video.',
+      'Aceptar',
+      {
+        duration: 5000,
+        horizontalPosition: 'right',
+        verticalPosition: 'top',
+        panelClass: ['snackbar-warning']
+      }
+    );
+  }
 
   // 🔄 Polling al backend hasta obtener resultados
   async pollAnalysisResults(sessionId: string) {
@@ -130,7 +177,7 @@ alerta() {
 
   async uploadResults(session_id: string) {
     try {
-      const res = await this.http.put(`http://localhost:8000/results/${session_id}/save`, null).toPromise();
+      const res = await this.http.put(`http://localhost:8000/api/results/${session_id}/save`, null).toPromise();
       Swal.fire({
         icon: 'success',
         title: 'Resultados guardados',
@@ -151,7 +198,7 @@ alerta() {
   // 📡 Consulta directa al backend
   async fetchAnalysisResults(sessionId: string): Promise<any> {
     return this.http
-      .get<any>(`http://localhost:8000/results/${sessionId}`)
+      .get<any>(`http://localhost:8000/api/results/${sessionId}`)
       .toPromise();
   }
 

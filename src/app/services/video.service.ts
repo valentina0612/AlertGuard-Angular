@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class VideoService {
-  private apiUrl = 'http://localhost:8000'; // FastAPI
+  private apiUrl = 'http://localhost:8000/api'; // FastAPI
   private ws: WebSocket | null = null;
 
   constructor(private http: HttpClient) {}
@@ -25,7 +25,7 @@ export class VideoService {
     onAlert: (msg: string) => void,
     onEnd: () => void
   ): void {
-    this.ws = new WebSocket(`ws://localhost:8000/ws/${sessionId}`);
+    this.ws = new WebSocket(`ws://localhost:8000/api/ws/${sessionId}`);
 
     this.ws.onmessage = (event) => {
       // 👉 Caso 1: mensaje binario (frame en JPEG)

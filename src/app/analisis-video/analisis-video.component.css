@@ -1176,3 +1176,602 @@ body {
   background: #e8f5e8 !important;
   border: 2px solid #2ed573 !important;
 }
+
+/* ===== EFECTOS DE DESENFOQUE (BLUR) ===== */
+
+/* Desenfoque en el contenedor principal */
+.app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Efecto de borde difuminado */
+.app-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(67, 97, 238, 0.1) 0%, 
+        rgba(63, 55, 201, 0.05) 100%);
+    border-radius: 24px;
+    z-index: -1;
+}
+
+/* Header con efecto glassmorphism */
+.app-header {
+    background: linear-gradient(135deg, 
+        rgba(67, 97, 238, 0.9) 0%, 
+        rgba(63, 55, 201, 0.8) 100%);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto de partículas en el header */
+.app-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, 
+        rgba(255, 255, 255, 0.1) 1px, 
+        transparent 1px);
+    background-size: 20px 20px;
+    animation: float 20s infinite linear;
+    z-index: 0;
+}
+
+@keyframes float {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(-20px, -20px) rotate(360deg); }
+}
+
+.app-header h1,
+.app-header p {
+    position: relative;
+    z-index: 1;
+}
+
+/* Área de upload con efecto vidrio */
+.upload-area {
+    border: 2px dashed rgba(67, 97, 238, 0.3);
+    border-radius: 20px;
+    padding: 3rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    cursor: pointer;
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-area::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(67, 97, 238, 0.1), 
+        transparent);
+    transition: left 0.6s ease;
+}
+
+.upload-area:hover::before {
+    left: 100%;
+}
+
+.upload-area:hover {
+    border-color: rgba(67, 97, 238, 0.6);
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 30px rgba(67, 97, 238, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Tarjetas de resultados con efecto glass */
+.result-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    border-left: 4px solid var(--primary);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.result-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(67, 97, 238, 0.3), 
+        transparent);
+}
+
+.result-card:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 
+        0 12px 40px rgba(67, 97, 238, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Sección de descarga con efecto vidrio */
+.download-container {
+    background: linear-gradient(135deg, 
+        rgba(102, 126, 234, 0.9) 0%, 
+        rgba(118, 75, 162, 0.8) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 
+        0 8px 32px rgba(102, 126, 234, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.download-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+    z-index: 0;
+}
+
+.download-header,
+.download-buttons {
+    position: relative;
+    z-index: 1;
+}
+
+/* Botones con efecto glass */
+.download-btn {
+    background: linear-gradient(135deg, 
+        rgba(67, 97, 238, 0.9) 0%, 
+        rgba(58, 86, 212, 0.8) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    box-shadow: 
+        0 4px 16px rgba(67, 97, 238, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.download-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.2), 
+        transparent);
+    transition: left 0.5s;
+}
+
+.download-btn:hover::before {
+    left: 100%;
+}
+
+.download-btn:hover {
+    background: linear-gradient(135deg, 
+        rgba(58, 86, 212, 0.95) 0%, 
+        rgba(47, 75, 199, 0.85) 100%);
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 25px rgba(67, 97, 238, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Efecto blur en el fondo de la página */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--dark);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    z-index: -1;
+}
+
+/* Ajustes para elementos internos */
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Efecto de desenfoque en el footer */
+.app-footer {
+    background: rgba(33, 37, 41, 0.9);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.9rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .app-container {
+        margin: 10px;
+        border-radius: 16px;
+    }
+    
+    .upload-area {
+        padding: 2rem;
+        border-radius: 16px;
+    }
+    
+    .result-card {
+        padding: 1.5rem;
+        border-radius: 12px;
+    }
+    
+    .download-container {
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+}
+
+/* Mejora en las transiciones */
+* {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== BARRA DE PROGRESO MEJORADA ===== */
+.progress-container {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4361ee, #3f37c9);
+    border-radius: 3px 3px 0 0;
+}
+
+.progress-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.progress-header h3 {
+    color: #4361ee;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.progress-header p {
+    color: #6c757d;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Contenedor principal de la barra */
+.progress-bar-container {
+    background: rgba(236, 239, 241, 0.8);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Barra de progreso exterior */
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.1),
+        0 1px 0 rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Barra de progreso interior que se llena */
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, 
+        #4361ee 0%, 
+        #3f37c9 50%, 
+        #764ba2 100%);
+    border-radius: 10px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto de brillo en la barra */
+.progress-fill::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Puntos de progreso */
+.progress-milestones {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.milestone {
+    width: 8px;
+    height: 8px;
+    background: #dee2e6;
+    border-radius: 50%;
+    position: relative;
+}
+
+.milestone.active {
+    background: #4361ee;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
+}
+
+.milestone::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: #6c757d;
+    white-space: nowrap;
+}
+
+.milestone:nth-child(1)::after { content: '0%'; }
+.milestone:nth-child(2)::after { content: '25%'; }
+.milestone:nth-child(3)::after { content: '50%'; }
+.milestone:nth-child(4)::after { content: '75%'; }
+.milestone:nth-child(5)::after { content: '100%'; }
+
+/* Información de progreso */
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(67, 97, 238, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(67, 97, 238, 0.1);
+}
+
+.progress-stats {
+    display: flex;
+    gap: 2rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #4361ee;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 0.2rem;
+}
+
+.progress-percentage {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #4361ee;
+    background: rgba(67, 97, 238, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* Indicador de actividad */
+.progress-activity {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background: rgba(76, 201, 240, 0.1);
+    border-radius: 8px;
+    border-left: 4px solid #4cc9f0;
+}
+
+.activity-dots {
+    display: flex;
+    gap: 4px;
+}
+
+.activity-dot {
+    width: 6px;
+    height: 6px;
+    background: #4cc9f0;
+    border-radius: 50%;
+    animation: pulse-dots 1.4s infinite ease-in-out;
+}
+
+.activity-dot:nth-child(1) { animation-delay: -0.32s; }
+.activity-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes pulse-dots {
+    0%, 80%, 100% { 
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    40% { 
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
+/* Efectos de terminado */
+.progress-container.completed {
+    background: rgba(46, 213, 115, 0.1);
+    border-color: rgba(46, 213, 115, 0.3);
+}
+
+.progress-container.completed .progress-fill {
+    background: linear-gradient(90deg, #2ed573, #20bf6b);
+}
+
+.progress-container.completed .progress-percentage {
+    color: #2ed573;
+    background: rgba(46, 213, 115, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .progress-container {
+        padding: 1.5rem;
+        margin: 1rem 0;
+    }
+    
+    .progress-info {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .progress-stats {
+        gap: 1rem;
+    }
+    
+    .stat-value {
+        font-size: 1.3rem;
+    }
+    
+    .progress-percentage {
+        font-size: 1.8rem;
+        min-width: 70px;
+    }
+    
+    .progress-bar {
+        height: 16px;
+    }
+}
