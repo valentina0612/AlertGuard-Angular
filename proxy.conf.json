@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "https://alertguard-backend-production.up.railway.app",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
