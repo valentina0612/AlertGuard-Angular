@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "node ./node_modules/@angular/cli/bin/ng build --configuration=production",
+    "build:render": "ng build --configuration=production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:frontAlertGuard": "node dist/front-alert-guard/server/server.mjs"
