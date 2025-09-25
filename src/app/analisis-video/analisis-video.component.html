@@ -117,10 +117,7 @@
                 {{ analysisResults?.covered_count || 0 }}
               </span>
             </div>
-            <div class="metric">
-              <span>Personas detectadas:</span>
-              <span class="metric-value">{{ analysisResults?.normal_count || 0 }}</span>
-            </div>
+        
             <div class="metric">
               <span>Acciones sospechosas:</span>
               <span class="metric-value" [ngClass]="analysisResults?.abnormal_behavior_detected > 0 ? 'warning' : 'success'">

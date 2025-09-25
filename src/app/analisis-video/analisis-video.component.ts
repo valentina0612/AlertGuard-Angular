@@ -36,7 +36,7 @@ export class AnalisisVideoComponent implements OnDestroy {
     private snackBar: MatSnackBar
   ) {}
 
-  ngInit() {
+  ngOnInit() {
     Swal.fire({
       icon: 'info',
       title: 'Bienvenido',
