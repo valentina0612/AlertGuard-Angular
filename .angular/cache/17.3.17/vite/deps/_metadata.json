@@ -1,76 +1,76 @@
 {
-  "hash": "8281c32f",
-  "configHash": "abc49d24",
-  "lockfileHash": "48eeac98",
-  "browserHash": "de53e7ba",
+  "hash": "64954fbf",
+  "configHash": "695efe5c",
+  "lockfileHash": "c1eff969",
+  "browserHash": "a4e6e1b0",
   "optimized": {
     "@angular/common": {
       "src": "../../../../../node_modules/@angular/common/fesm2022/common.mjs",
       "file": "@angular_common.js",
-      "fileHash": "d1e2b516",
+      "fileHash": "d5e97a63",
       "needsInterop": false
     },
     "@angular/common/http": {
       "src": "../../../../../node_modules/@angular/common/fesm2022/http.mjs",
       "file": "@angular_common_http.js",
-      "fileHash": "2e6e76a3",
+      "fileHash": "75744fd7",
       "needsInterop": false
     },
     "@angular/core": {
       "src": "../../../../../node_modules/@angular/core/fesm2022/core.mjs",
       "file": "@angular_core.js",
-      "fileHash": "6c2cc767",
+      "fileHash": "75f3d473",
       "needsInterop": false
     },
     "@angular/material/snack-bar": {
       "src": "../../../../../node_modules/@angular/material/fesm2022/snack-bar.mjs",
       "file": "@angular_material_snack-bar.js",
-      "fileHash": "6d8f115c",
+      "fileHash": "45e981d3",
       "needsInterop": false
     },
     "@angular/platform-browser": {
       "src": "../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
       "file": "@angular_platform-browser.js",
-      "fileHash": "8df67d6a",
+      "fileHash": "4f4a5dc3",
       "needsInterop": false
     },
     "@angular/platform-browser/animations/async": {
       "src": "../../../../../node_modules/@angular/platform-browser/fesm2022/animations/async.mjs",
       "file": "@angular_platform-browser_animations_async.js",
-      "fileHash": "153c0b8f",
+      "fileHash": "9ff22843",
       "needsInterop": false
     },
     "@angular/router": {
       "src": "../../../../../node_modules/@angular/router/fesm2022/router.mjs",
       "file": "@angular_router.js",
-      "fileHash": "590a3cac",
+      "fileHash": "b031aa8f",
       "needsInterop": false
     },
     "sweetalert2": {
       "src": "../../../../../node_modules/sweetalert2/dist/sweetalert2.esm.all.js",
       "file": "sweetalert2.js",
-      "fileHash": "14d0d55b",
+      "fileHash": "58760235",
       "needsInterop": false
     }
   },
   "chunks": {
-    "browser-VNV6VAME": {
-      "file": "browser-VNV6VAME.js"
+    "browser-XUY6IPWQ": {
+      "file": "browser-XUY6IPWQ.js"
     },
-    "chunk-BEW2ZU6R": {
-      "file": "chunk-BEW2ZU6R.js"
+    "chunk-AM2R767L": {
+      "file": "chunk-AM2R767L.js"
     },
-    "chunk-DYQN5DXM": {
-      "file": "chunk-DYQN5DXM.js"
+    "chunk-AIXOYLWA": {
+      "file": "chunk-AIXOYLWA.js"
     },
-    "chunk-JNODYRUJ": {
-      "file": "chunk-JNODYRUJ.js"
+    "chunk-X7GXEJRN": {
+      "file": "chunk-X7GXEJRN.js"
     },
-    "chunk-GXR4EJSC": {
-      "file": "chunk-GXR4EJSC.js"
+    "chunk-MNEHKVQQ": {
+      "file": "chunk-MNEHKVQQ.js"
     },
-    "chunk-O2KBQCTK": {
-      "file": "chunk-O2KBQCTK.js"
+    "chunk-WM7SLFZG": {
+      "file": "chunk-WM7SLFZG.js"
     },
     "chunk-WDMUDEB6": {
       "file": "chunk-WDMUDEB6.js"

@@ -878,72 +878,272 @@ body {
     }
 }
 
-/* ===== ESTILOS ESPECÍFICOS PARA PDF ===== */
+/* ===== ESTILOS ESPECÍFICOS PARA PDF - SIN TRANSPARENCIAS ===== */
 .pdf-export {
-  width: 800px !important;
-  background: white !important;
-  color: black !important;
+  width: 190mm !important;
+  max-width: 190mm !important;
+  background: #FFFFFF !important;
+  color: #000000 !important;
   font-family: Arial, sans-serif !important;
-  padding: 20px !important;
+  padding: 10mm !important;
+  margin: 0 auto !important;
   box-sizing: border-box !important;
+  opacity: 1 !important;
+  overflow: visible !important;
 }
 
+/* Control de saltos de página */
+.pdf-export .results-header,
+.pdf-export .result-card,
+.pdf-export .metric,
+.pdf-export .security-summary,
+.pdf-export .detections-detail {
+  page-break-inside: avoid !important;
+  -webkit-column-break-inside: avoid !important;
+  break-inside: avoid !important;
+}
+
+.pdf-export .results-grid {
+  page-break-inside: auto !important;
+}
+
+/* Evitar que los títulos queden solos al final de la página */
+.pdf-export h2,
+.pdf-export h3 {
+  page-break-after: avoid !important;
+  break-after: avoid !important;
+}
+
+/* Forzar opacidad y colores sólidos en todos los elementos del PDF */
+.pdf-export * {
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Eliminar todos los blur y transparencias */
+.pdf-export .app-container,
+.pdf-export .result-card,
+.pdf-export .download-container {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: #FFFFFF !important;
+  opacity: 1 !important;
+}
+
+/* Header del reporte */
 .pdf-export .results-header {
-  background: #667eea !important;
-  color: white !important;
+  background: #4361ee !important;
+  color: #FFFFFF !important;
   padding: 20px !important;
   border-radius: 8px !important;
+  opacity: 1 !important;
+  margin-bottom: 20px !important;
+}
+
+.pdf-export .results-header h2,
+.pdf-export .results-header p {
+  color: #FFFFFF !important;
+  opacity: 1 !important;
+  margin: 5px 0 !important;
+}
+
+/* Grid de resultados */
+.pdf-export .results-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 15px !important;
+  margin-bottom: 20px !important;
+  page-break-inside: auto !important;
+}
+
+/* Asegurar que el contenido sea visible */
+.pdf-export .detailed-content {
+  display: block !important;
+  opacity: 1 !important;
+}
+
+.pdf-export .detections-detail {
+  background: #F8F9FA !important;
+  padding: 15px !important;
+  border-radius: 8px !important;
+  margin-top: 15px !important;
+  border: 1px solid #DEE2E6 !important;
+}
+
+.pdf-export .detections-list {
+  display: block !important;
+}
+
+.pdf-export .detection-item {
+  display: flex !important;
+  justify-content: space-between !important;
+  padding: 8px !important;
+  margin: 5px 0 !important;
+  background: #FFFFFF !important;
+  border-left: 3px solid #0D6EFD !important;
+  border-radius: 4px !important;
+}
+
+/* Tarjetas de resultados */
+.pdf-export .result-card {
+  background: #F8F9FA !important;
+  border: 2px solid #DEE2E6 !important;
+  border-radius: 8px !important;
+  padding: 15px !important;
+  opacity: 1 !important;
+  page-break-inside: avoid !important;
+}
+
+.pdf-export .result-card h3 {
+  color: #212529 !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+  margin-bottom: 15px !important;
+  padding-bottom: 10px !important;
+  border-bottom: 2px solid #4361ee !important;
+  opacity: 1 !important;
+}
+
+/* Métricas con colores sólidos */
+.pdf-export .metric {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 10px !important;
+  margin: 8px 0 !important;
+  border-bottom: 1px solid #DEE2E6 !important;
+  color: #212529 !important;
+  opacity: 1 !important;
+}
+
+.pdf-export .metric span {
+  color: #212529 !important;
+  opacity: 1 !important;
+}
+
+.pdf-export .metric-value {
+  font-weight: bold !important;
+  padding: 6px 12px !important;
+  border-radius: 4px !important;
+  opacity: 1 !important;
+  color: #FFFFFF !important;
 }
 
 .pdf-export .metric-value.success {
-  background: #4cc9f0 !important;
-  color: white !important;
-  border: 2px solid #4cc9f0 !important;
+  background: #28A745 !important;
+  color: #FFFFFF !important;
+  border: 2px solid #28A745 !important;
+  opacity: 1 !important;
 }
 
 .pdf-export .metric-value.warning {
-  background: #f8961e !important;
-  color: white !important;
-  border: 2px solid #f8961e !important;
+  background: #FFC107 !important;
+  color: #212529 !important;
+  border: 2px solid #FFC107 !important;
+  opacity: 1 !important;
 }
 
 .pdf-export .metric-value.alert {
-  background: #f72585 !important;
-  color: white !important;
-  border: 2px solid #f72585 !important;
+  background: #DC3545 !important;
+  color: #FFFFFF !important;
+  border: 2px solid #DC3545 !important;
+  opacity: 1 !important;
 }
 
-.pdf-export .summary-item.alert {
-  background: #ff4757 !important;
-  color: white !important;
-}
-
-.pdf-export .summary-item.warning {
-  background: #ffa502 !important;
-  color: white !important;
-}
-
-.pdf-export .summary-item.safe {
-  background: #2ed573 !important;
-  color: white !important;
+/* Badges de estadísticas */
+.pdf-export .stat-badge {
+  padding: 6px 12px !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  display: inline-block !important;
+  margin: 4px !important;
+  opacity: 1 !important;
 }
 
 .pdf-export .stat-badge.weapon {
-  background: #ff4757 !important;
-  color: white !important;
-  border: 2px solid #ff4757 !important;
+  background: #DC3545 !important;
+  color: #FFFFFF !important;
+  border: 2px solid #DC3545 !important;
+  opacity: 1 !important;
 }
 
 .pdf-export .stat-badge.covered {
-  background: #ffa502 !important;
-  color: white !important;
-  border: 2px solid #ffa502 !important;
+  background: #FD7E14 !important;
+  color: #FFFFFF !important;
+  border: 2px solid #FD7E14 !important;
+  opacity: 1 !important;
 }
 
 .pdf-export .stat-badge.person {
-  background: #1976d2 !important;
-  color: white !important;
-  border: 2px solid #1976d2 !important;
+  background: #0D6EFD !important;
+  color: #FFFFFF !important;
+  border: 2px solid #0D6EFD !important;
+  opacity: 1 !important;
+}
+
+.pdf-export .stat-badge.anomaly {
+  background: #FFC107 !important;
+  color: #212529 !important;
+  border: 2px solid #FFC107 !important;
+  opacity: 1 !important;
+}
+
+/* Resumen de seguridad */
+.pdf-export .security-summary {
+  margin-top: 20px !important;
+  padding: 15px !important;
+  border-radius: 8px !important;
+  border: 3px solid !important;
+  opacity: 1 !important;
+  page-break-inside: avoid !important;
+}
+
+.pdf-export .security-summary h3 {
+  color: #212529 !important;
+  margin-bottom: 10px !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+  opacity: 1 !important;
+}
+
+.pdf-export .security-summary.alert {
+  background: #F8D7DA !important;
+  border-color: #DC3545 !important;
+  opacity: 1 !important;
+}
+
+.pdf-export .security-summary.safe {
+  background: #D1E7DD !important;
+  border-color: #28A745 !important;
+  opacity: 1 !important;
+}
+
+.pdf-export .summary-item {
+  padding: 8px 12px !important;
+  margin: 5px 0 !important;
+  border-radius: 4px !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+}
+
+.pdf-export .summary-item.alert {
+  background: #DC3545 !important;
+  color: #FFFFFF !important;
+  opacity: 1 !important;
+}
+
+.pdf-export .summary-item.warning {
+  background: #FD7E14 !important;
+  color: #FFFFFF !important;
+  opacity: 1 !important;
+}
+
+.pdf-export .summary-item.safe {
+  background: #28A745 !important;
+  color: #FFFFFF !important;
+  opacity: 1 !important;
 }
 
 /* Simplificar gradientes para PDF */
@@ -963,38 +1163,72 @@ body {
 @media print {
   @page {
     margin: 0.5in;
+    size: auto;
   }
-  
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
   body * {
     visibility: hidden;
   }
-  
+
   #report-content,
   #report-content * {
     visibility: visible;
   }
-  
+
   #report-content {
     position: absolute;
     left: 0;
     top: 0;
     width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
     padding: 20px !important;
     background: white !important;
     color: black !important;
+    page-break-after: auto;
   }
-  
+
   .download-section,
   .toggle-details-btn,
-  .app-footer {
+  .app-footer,
+  .download-buttons {
     display: none !important;
+    visibility: hidden !important;
   }
-  
+
   .results-header {
     background: #667eea !important;
     color: white !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    page-break-after: avoid !important;
+  }
+
+  .results-grid {
+    page-break-inside: avoid !important;
+  }
+
+  .result-card {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .detections-detail {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .security-summary {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 }
 
