@@ -67,8 +67,11 @@ export class AnalisisVideoComponent implements OnDestroy {
           confirmButtonText: 'Aceptar'
         });
 
-        // 🚀 Abrir conexión WS
-        this.videoService.connect(
+        // 🚀 Abrir conexión WS con workers paralelos (OPTIMIZADO)
+        // Determinar número de workers según duración del video
+        const numWorkers = this.getOptimalWorkers(file);
+
+        this.videoService.connectParallel(
           this.sessionId,
           (url) => {
             this.frameUrl = url;
@@ -83,14 +86,15 @@ export class AnalisisVideoComponent implements OnDestroy {
           async () => {
             this.statusMessage = '⏳ Procesamiento terminado, obteniendo resultados...';
             this.progress = 100; // Completar al 100% al terminar
-    
+
             // 🔄 arrancamos polling SOLO cuando llega "end"
             if (this.sessionId) {
               await this.pollAnalysisResults(this.sessionId);
               this.videoUploaded = false;
               this.videoFinished = true;
             }
-          }
+          },
+          numWorkers // Número dinámico de workers
         );
       },
       error: () => {
@@ -100,18 +104,39 @@ export class AnalisisVideoComponent implements OnDestroy {
     });
   }
 
+  // Método para determinar el número óptimo de workers según el video
+  private getOptimalWorkers(file: File): number {
+    const fileSizeMB = file.size / (1024 * 1024); // Tamaño en MB
+
+    // Estrategia basada en tamaño del archivo:
+    // - Videos pequeños (<5MB o ~10-20 seg): 1 worker
+    // - Videos medianos (5-15MB o ~20-60 seg): 2 workers
+    // - Videos grandes (>15MB o >60 seg): 3 workers
+
+    if (fileSizeMB < 5) {
+      console.log(`📹 Video pequeño (${fileSizeMB.toFixed(2)}MB) - Usando 1 worker`);
+      return 1;
+    } else if (fileSizeMB < 15) {
+      console.log(`📹 Video mediano (${fileSizeMB.toFixed(2)}MB) - Usando 2 workers`);
+      return 2;
+    } else {
+      console.log(`📹 Video grande (${fileSizeMB.toFixed(2)}MB) - Usando 3 workers`);
+      return 3;
+    }
+  }
+
   // Método para estimar el total de frames del video
   private estimateTotalFrames(file: File) {
     const video = document.createElement('video');
     video.src = URL.createObjectURL(file);
-    
+
     video.onloadedmetadata = () => {
       // Estimación: 30 frames por segundo × duración en segundos
       const duration = video.duration;
       this.totalFrames = Math.round(duration * 30); // 30 FPS
       URL.revokeObjectURL(video.src);
     };
-    
+
     video.onerror = () => {
       // Si no se puede obtener la duración, usar un valor por defecto
       this.totalFrames = 300; // Valor por defecto
