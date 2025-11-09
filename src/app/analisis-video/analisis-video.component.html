@@ -118,17 +118,10 @@
               </span>
             </div>
             <div class="metric">
-              <span>Personas detectadas:</span>
-              <span class="metric-value">{{ analysisResults?.normal_count || 0 }}</span>
-            </div>
-            <div class="metric">
               <span>Acciones sospechosas:</span>
               <span class="metric-value" [ngClass]="analysisResults?.abnormal_behavior_detected > 0 ? 'warning' : 'success'">
                 {{ analysisResults?.abnormal_count || 0 }}
               </span>
-            </div>
-            <div class="metric">
-              <small>Confianza promedio: {{ ((analysisResults?.average_confidence || 0.75) * 100) | number:'1.0-0' }}%</small>
             </div>
           </div>
 
@@ -170,7 +163,6 @@
                 <div class="detections-stats">
                   <div class="stat-badge weapon">🔫 {{ analysisResults?.weapons_count || 0 }} armas</div>
                   <div class="stat-badge covered">🎭 {{ analysisResults?.covered_count || 0 }} rostros cubiertos</div>
-                  <div class="stat-badge person">👤 {{ analysisResults?.normal_count || 0 }} personas</div>
                   <div class="stat-badge anomaly">⚠️ {{ analysisResults?.abnormal_count || 0 }} anomalías</div>
                 </div>
 
@@ -248,6 +240,6 @@
 
   <!-- FOOTER -->
   <footer class="app-footer">
-    <p>&copy; 2024 AI Security System. Todos los derechos reservados.</p>
+    <p>&copy; 2025 AlertGuard. Todos los derechos reservados.</p>
   </footer>
 </div>
