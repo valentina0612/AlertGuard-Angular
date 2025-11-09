@@ -132,6 +132,10 @@ body {
     color: var(--primary);
 }
 
+.upload-icon .material-icons {
+    font-size: 64px;
+}
+
 .upload-label h3 {
     font-size: 1.4rem;
     margin-bottom: 0.5rem;
@@ -294,7 +298,12 @@ body {
     color: var(--secondary);
 }
 
-.toggle-details-btn svg.rotated {
+.toggle-details-btn .material-icons {
+    font-size: 24px;
+    transition: transform 0.3s ease;
+}
+
+.toggle-details-btn .material-icons.rotate {
     transform: rotate(180deg);
 }
 
@@ -518,6 +527,10 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+.download-icon .material-icons {
+    font-size: 36px;
+}
+
 .download-info h3 {
     color: white;
     margin: 0 0 0.5rem 0;
@@ -581,6 +594,10 @@ body {
     display: flex;
     align-items: center;
     transition: transform 0.3s ease;
+}
+
+.btn-icon .material-icons {
+    font-size: 24px;
 }
 
 .download-btn:hover .btn-icon {

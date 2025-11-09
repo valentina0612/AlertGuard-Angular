@@ -20,7 +20,7 @@
         >
         <label for="videoUpload" class="upload-label">
           <div class="upload-icon">
-            <i class="fas fa-video"></i>
+            <span class="material-icons">videocam</span>
           </div>
           <h3>Haz clic o arrastra tu video aquí</h3>
           <p class="file-info" id="fileInfo">
@@ -159,7 +159,7 @@
         <div class="detailed-results">
           <button class="toggle-details-btn" (click)="toggleDetails()">
             <span>{{ showDetails ? 'Ocultar detalles' : 'Ver detalles completos' }}</span>
-            <i class="fas fa-chevron-down" [ngClass]="{'rotate': showDetails}"></i>
+            <span class="material-icons" [ngClass]="{'rotate': showDetails}">expand_more</span>
           </button>
 
           <div class="detailed-content" *ngIf="showDetails">
@@ -218,7 +218,7 @@
         <div class="download-container">
           <div class="download-header">
             <div class="download-icon">
-              <i class="fas fa-file-download"></i>
+              <span class="material-icons">file_download</span>
             </div>
             <div class="download-info">
               <h3>Reporte de Análisis Completo</h3>
@@ -229,14 +229,14 @@
           <div class="download-buttons">
             <button class="download-btn" (click)="printReport()">
               <span class="btn-icon">
-                <i class="fas fa-print"></i>
+                <span class="material-icons">print</span>
               </span>
               <span class="btn-text">Imprimir Reporte</span>
             </button>
 
             <button class="download-btn secondary" (click)="downloadPDF()">
               <span class="btn-icon">
-                <i class="fas fa-file-pdf"></i>
+                <span class="material-icons">picture_as_pdf</span>
               </span>
               <span class="btn-text">Descargar PDF</span>
             </button>
