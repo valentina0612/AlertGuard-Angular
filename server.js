@@ -4,33 +4,55 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Ruta a los archivos compilados
 const distPath = path.join(__dirname, 'dist', 'front-alert-guard', 'browser');
 
 console.log('Serving files from:', distPath);
 
-// IMPORTANTE: Servir archivos estáticos ANTES del wildcard
-app.use(express.static(distPath, {
-  index: false, // No servir index.html automáticamente
-  setHeaders: (res, filepath) => {
-    // Asegurar MIME types correctos
-    if (filepath.endsWith('.js')) {
-      res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');
-    } else if (filepath.endsWith('.mjs')) {
-      res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');
-    } else if (filepath.endsWith('.css')) {
-      res.setHeader('Content-Type', 'text/css; charset=UTF-8');
-    } else if (filepath.endsWith('.json')) {
-      res.setHeader('Content-Type', 'application/json; charset=UTF-8');
+// CRÍTICO: Configurar MIME types y deshabilitar etag
+app.use((req, res, next) => {
+  // Si es un archivo estático, setear headers apropiados
+  if (req.url.match(/\.(js|css|json|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/)) {
+    const ext = path.extname(req.url);
+    const mimeTypes = {
+      '.js': 'application/javascript',
+      '.mjs': 'application/javascript',
+      '.css': 'text/css',
+      '.json': 'application/json',
+      '.png': 'image/png',
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.gif': 'image/gif',
+      '.svg': 'image/svg+xml',
+      '.ico': 'image/x-icon',
+      '.woff': 'font/woff',
+      '.woff2': 'font/woff2',
+      '.ttf': 'font/ttf',
+      '.eot': 'application/vnd.ms-fontobject'
+    };
+    
+    if (mimeTypes[ext]) {
+      res.setHeader('Content-Type', mimeTypes[ext]);
     }
   }
+  next();
+});
+
+// Servir archivos estáticos
+app.use(express.static(distPath, {
+  maxAge: '1y',
+  etag: false,
+  lastModified: false
 }));
 
-// El wildcard debe ir AL FINAL
+// Wildcard solo para rutas de Angular (no archivos)
 app.get('*', (req, res) => {
-  // Log para debugging
   console.log('Wildcard route hit for:', req.url);
-  res.sendFile(path.join(distPath, 'index.html'));
+  res.sendFile(path.join(distPath, 'index.html'), (err) => {
+    if (err) {
+      console.error('Error serving index.html:', err);
+      res.status(500).send('Error loading application');
+    }
+  });
 });
 
 app.listen(port, () => {
